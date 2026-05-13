@@ -1,42 +1,74 @@
-![readme-header](https://user-images.githubusercontent.com/1769678/223572353-788d5d38-cd28-40fa-96cd-9d29226f7e4b.png)
-
-<h4 align="center">
-  <a href="https://codesandbox.io/p/sandbox/github/markmanx/isoflow">Online playground</a> |
-  <a href="https://isoflow.io/docs">Developer docs</a> |
-  <a href="https://github.com/markmanx/isoflow">Github</a> |
-  <a href="https://discord.gg/QYPkvZth7D">Discord</a> |
-  <a href="https://hub.docker.com/r/markmanx/isoflow/tags">Docker image</a>
-</h4>
+![readme-header](packaging/cloudron/screenshots/01-editor.png)
 
 <div align="center">
-    <h1>A React component for drawing network diagrams.</h1>
+    <h1>Cloudron Isoflow</h1>
+    <p>A browser-based isometric editor for network and infrastructure diagrams, packaged as a Cloudron community app.</p>
 </div>
 
 <div align="center">
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-![CircleCI](https://circleci.com/gh/markmanx/isoflow.svg?style=shield)
 
 </div>
 
-## About Isoflow Community Edition
-Isoflow is an open-core project. We offer the [Isoflow Community Edition](https://github.com/markmanx/isoflow) as fully-functional, open-source software under the MIT license.  In addition, we also support our development efforts by offering **Isoflow Pro** with additional features for commercial use.  You can read more about the differences between Pro and the Community Edition [here](https://isoflow.io/pro-vs-community-edition).
+## About this fork
 
-## Key features
-- **Drag-and-drop editor** - Express your architecture with icons, regions and connectors.
-- **Extensible icon system** - Create your own icon library, or use plugins for existing libraries including AWS, Azure, GCP, Kubernetes, and more.
-- **Export options** - Export diagrams as code or images.
+This repository is a maintained fork of [markmanx/isoflow](https://github.com/markmanx/isoflow) by Mark Mankarious — the original MIT-licensed Community Edition. The upstream project has not seen updates in some time. We picked it up to:
 
-## Quick start
+- **Restore compatibility** with diagram JSON files exported by newer Isoflow forks (auto-migration of legacy `v2.3.0`-shaped models on import).
+- **Package it for [Cloudron](https://cloudron.io)** as a community app with optional Cloudron single sign-on. See [`PUBLISHING.md`](./PUBLISHING.md) and [`packaging/cloudron/README.md`](./packaging/cloudron/README.md).
+- Track all visible changes in [`CHANGELOG.md`](./CHANGELOG.md).
 
-Install both the editor and isopacks from [npm](https://www.npmjs.com/package/isoflow):
+The original author retains copyright on the upstream Isoflow code (MIT, © 2025 Mark Mankarious); see [`LICENSE`](./LICENSE).
 
-- `npm install isoflow @isoflow/isopacks`
+## Features
 
-See our [documentation](https://isoflow.io/docs) for more information.
+- **Drag-and-drop isometric editor** — icons, rectangles, connectors, text boxes.
+- **1000+ built-in icons** — Isoflow's own set plus AWS, Azure, GCP, and Kubernetes packs, all bundled into the SPA at build time. No separate `@isoflow/isopacks` install needed at runtime.
+- **JSON import / export** — diagrams travel as portable JSON files. Imports auto-migrate from the legacy `v2.3.0` schema if needed.
+- **PNG export** of the current canvas.
+- **Cloudron-native auth toggle** — public by default; flip `AUTH_ENABLED=true` in `/app/data/app.env` to gate the app behind Cloudron SSO for any authenticated user.
 
-## Professional support
-For professional support, please consider purchasing a license for Isoflow Pro.  Isoflow Pro includes additional features and support options.  For more information, visit [isoflow.io](https://isoflow.io).
+## Installing on a Cloudron
 
-## Found a bug or need support?
-Please report bugs and issues [here](https://github.com/markmanx/isoflow/issues), or on our [Discord server](https://discord.gg/QYPkvZth7D).
+```bash
+cloudron install --server my.example.com \
+                 --versions-url https://raw.githubusercontent.com/pronetivity/cloudron-isoflow/main/CloudronVersions.json \
+                 --location isoflow.example.com
+```
+
+Or in the Cloudron dashboard: **Settings → App Store → Add custom app** and paste the same `CloudronVersions.json` URL.
+
+See [`PUBLISHING.md`](./PUBLISHING.md) for all install paths (`--versions-url`, `--image`, server-side build) and the release workflow.
+
+## Local development
+
+Install dependencies and start the dev server:
+
+```bash
+npm install
+npm start
+```
+
+Build the standalone SPA bundle (the same one shipped inside the Cloudron image):
+
+```bash
+npm run docker:build       # outputs to ./dist
+```
+
+Run the test suite:
+
+```bash
+npm test
+```
+
+## Reporting bugs
+
+Open an issue in this repository: [pronetivity/cloudron-isoflow/issues](https://github.com/pronetivity/cloudron-isoflow/issues).
+
+## License
+
+MIT.
+
+- Upstream Isoflow © 2025 Mark Mankarious — see [`LICENSE`](./LICENSE) and the original repo at [markmanx/isoflow](https://github.com/markmanx/isoflow).
+- Modifications and Cloudron packaging © 2026 ProNetivity Inc.
