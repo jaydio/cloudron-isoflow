@@ -5,6 +5,8 @@ on:
     branches: [main]
     tags: ['v*']
     paths:
+      - 'Dockerfile'
+      - 'CloudronManifest.json'
       - 'packaging/cloudron/**'
       - 'src/**'
       - 'webpack/**'
@@ -14,6 +16,8 @@ on:
       - '.github/workflows/cloudron-image.yml'
   pull_request:
     paths:
+      - 'Dockerfile'
+      - 'CloudronManifest.json'
       - 'packaging/cloudron/**'
       - '.github/workflows/cloudron-image.yml'
   workflow_dispatch:
@@ -57,7 +61,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: packaging/cloudron/Dockerfile
+          file: Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

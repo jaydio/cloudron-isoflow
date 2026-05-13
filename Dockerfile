@@ -1,29 +1,50 @@
-# Use the official Node.js runtime as the base image
-FROM node:21 as build
+# syntax=docker/dockerfile:1.7
 
-# Set the working directory in the container
-WORKDIR /app
+# ----- Stage 1: build the Isoflow SPA -----
+FROM node:21-bookworm-slim AS spa
 
-# Copy package.json and package-lock.json to the working directory
-COPY package*.json ./
+WORKDIR /build
 
-# Install dependencies
-RUN npm install
+COPY package.json package-lock.json ./
+RUN npm ci --no-audit --no-fund --ignore-scripts
 
-# Copy the entire application code to the container
-COPY . .
-
-# Build the React app for production
+COPY tsconfig.json ./
+COPY webpack/ ./webpack/
+COPY src/ ./src/
 RUN npm run docker:build
 
-# Use Nginx as the production server
-FROM nginx:alpine
+# ----- Stage 2: install server deps -----
+FROM node:21-bookworm-slim AS server-deps
 
-# Copy the built React app to Nginx's web server directory
-COPY --from=build /app/dist /usr/share/nginx/html
+WORKDIR /server
+COPY packaging/cloudron/package.json packaging/cloudron/package-lock.json* ./
+RUN if [ -f package-lock.json ]; then \
+      npm ci --omit=dev --no-audit --no-fund; \
+    else \
+      npm install --omit=dev --no-audit --no-fund; \
+    fi
 
-# Expose port 80 for the Nginx server
-EXPOSE 80
+# ----- Stage 3: Cloudron runtime -----
+FROM cloudron/base:5.0.0
 
-# Start Nginx when the container runs
-CMD ["nginx", "-g", "daemon off;"]
+ENV NODE_ENV=production \
+    PORT=3000 \
+    STATIC_DIR=/app/code/dist
+
+# /app/code is the read-only image root. /app/data is provided by the
+# localstorage addon at runtime.
+WORKDIR /app/code
+
+COPY --from=spa /build/dist /app/code/dist
+COPY --from=server-deps /server/node_modules /app/code/node_modules
+
+COPY packaging/cloudron/server.js          /app/code/server.js
+COPY packaging/cloudron/start.sh           /app/code/start.sh
+COPY packaging/cloudron/app.env.example    /app/code/app.env.example
+COPY packaging/cloudron/package.json       /app/code/package.json
+
+RUN chmod +x /app/code/start.sh && chown -R cloudron:cloudron /app/code
+
+EXPOSE 3000
+
+CMD ["/app/code/start.sh"]

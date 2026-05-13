@@ -5,16 +5,19 @@ Builds the upstream Isoflow SPA into a Cloudron community app with an optional C
 ## Layout
 
 ```
-packaging/cloudron/
-├── CloudronManifest.json    # app metadata + addons
-├── Dockerfile               # multi-stage: build SPA, then Cloudron runtime
-├── server.js                # Express host + optional OIDC gate
-├── start.sh                 # entrypoint; seeds /app/data/app.env on first boot
-├── app.env.example          # default runtime config (AUTH_ENABLED=false)
-├── description.md           # rendered in the Cloudron app store
-├── postinstall.md           # shown to the admin after install
-├── package.json             # server dependencies
-└── README.md                # this file
+./
+├── CloudronManifest.json         # app metadata + addons (at repo root, per Cloudron CLI convention)
+├── Dockerfile                    # multi-stage: build SPA, then Cloudron runtime
+├── Dockerfile.legacy             # upstream nginx-based standalone build (kept for reference)
+└── packaging/cloudron/
+    ├── server.js                 # Express host + optional OIDC gate
+    ├── start.sh                  # entrypoint; seeds /app/data/app.env on first boot
+    ├── app.env.example           # default runtime config (AUTH_ENABLED=false)
+    ├── description.md            # rendered in the Cloudron app store
+    ├── postinstall.md            # shown to the admin after install
+    ├── icon.png                  # 256x256 app icon
+    ├── package.json              # Express server dependencies
+    └── README.md                 # this file
 ```
 
 The Isoflow SPA itself is built from the repo root (`npm run docker:build`).
@@ -24,21 +27,21 @@ The Isoflow SPA itself is built from the repo root (`npm run docker:build`).
 From the repo root:
 
 ```bash
-cloudron build     # builds image, pushes to your registry
-cloudron install   # installs from the registry
-cloudron update    # subsequent updates
+cloudron install --server my.example.com --location isoflow.example.com
+cloudron update  --server my.example.com --app isoflow.example.com
 ```
 
-`cloudron build` uses `packaging/cloudron/Dockerfile` because `CloudronManifest.json` is referenced from there. Run all `cloudron` commands with `--manifest packaging/cloudron/CloudronManifest.json` if invoking from the repo root.
+`cloudron install` uploads the source, builds the image on the Cloudron server using the root `Dockerfile`, and deploys it.
 
-## Build & install (manual Docker workflow)
+## Build & install (pre-built image)
 
 ```bash
-docker build -t ghcr.io/pronetivity/cloudron-isoflow:v1.2.0 -f packaging/cloudron/Dockerfile .
-docker push ghcr.io/pronetivity/cloudron-isoflow:v1.2.0
+docker build -t ghcr.io/pronetivity/cloudron-isoflow:v1.2.0 .
+docker push     ghcr.io/pronetivity/cloudron-isoflow:v1.2.0
 
-cloudron install --image ghcr.io/pronetivity/cloudron-isoflow:v1.2.0 \
-                 --manifest packaging/cloudron/CloudronManifest.json
+cloudron install --server my.example.com \
+                 --image  ghcr.io/pronetivity/cloudron-isoflow:v1.2.0 \
+                 --location isoflow.example.com
 ```
 
 ## Auth toggle
