@@ -6,7 +6,8 @@ import {
   CoordsUtils,
   categoriseIcons,
   generateId,
-  getItemByIdOrThrow
+  getItemByIdOrThrow,
+  migrateModel
 } from 'src/utils';
 import * as reducers from 'src/stores/reducers';
 import { useModelStore } from 'src/stores/modelStore';
@@ -34,7 +35,8 @@ export const useInitialDataManager = () => {
 
       setIsReady(false);
 
-      const validationResult = modelSchema.safeParse(_initialData);
+      const migrated = migrateModel(_initialData);
+      const validationResult = modelSchema.safeParse(migrated);
 
       if (!validationResult.success) {
         // TODO: let's get better at reporting error messages here (starting with how we present them to users)
@@ -44,7 +46,7 @@ export const useInitialDataManager = () => {
         return;
       }
 
-      const initialData = _initialData;
+      const initialData = migrated;
 
       if (initialData.views.length === 0) {
         const updates = reducers.view({
