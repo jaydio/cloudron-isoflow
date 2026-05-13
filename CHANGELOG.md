@@ -10,10 +10,20 @@ Change categories: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `Securi
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-05-13
+
 ### Added
-- Cloudron community-app packaging under `packaging/cloudron/`: multi-stage `Dockerfile` (builds the SPA, then runs on `cloudron/base:5.0.0`), `CloudronManifest.json` (manifestVersion 2, `localstorage` + `oidc` addons), Express host (`server.js`) that serves the built SPA and optionally gates all routes behind Cloudron OIDC, plus `start.sh` that seeds `/app/data/app.env` on first boot.
+- Cloudron community-app packaging under `packaging/cloudron/`: multi-stage `Dockerfile` (builds the SPA, then runs on `cloudron/base:5.0.0`), `CloudronManifest.json` at the repo root (manifestVersion 2, `localstorage` + `oidc` addons), Express host (`server.js`) that serves the built SPA and optionally gates all routes behind Cloudron OIDC, plus `start.sh` that seeds `/app/data/app.env` on first boot.
 - `AUTH_ENABLED` toggle in `/app/data/app.env` (default `false`) flips the Cloudron deployment between public and SSO-protected without rebuilding. Optional `ALLOWED_USERS` allowlist when SSO is on.
 - GitHub Actions workflow (`.github/workflows/cloudron-image.yml`) builds and pushes `ghcr.io/<owner>/cloudron-isoflow:vX.Y.Z` on tag pushes and `:edge` on `main`.
+- `PUBLISHING.md` documents the tag → GHCR → `cloudron install` flow.
+- App icon: 1024×1024 ProNetivity-branded artwork at `packaging/cloudron/icon.png`.
+- Manifest now declares `packagerName`, `packagerUrl`, and `upstreamLicense` so the Cloudron app store shows the right attribution.
+
+### Changed
+- Cloudron app id is `ph.pronetivity.isoflow`. Pre-existing installs under the previous id must be uninstalled and reinstalled to pick up the new id.
+- `LICENSE` keeps the upstream MIT copyright and adds a ProNetivity Inc. copyright line for the Cloudron packaging modifications.
+- Upstream nginx-only `Dockerfile` retained for reference as `Dockerfile.legacy`.
 
 ## [1.2.0] - 2026-05-13
 
@@ -23,5 +33,6 @@ Change categories: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `Securi
 ### Changed
 - Pin `pathfinding` to the upstream GitHub tarball (`github:qiao/PathFinding.js#0.4.18`) instead of the npm registry release.
 
-[Unreleased]: https://github.com/pronetivity/cloudron-isoflow/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/pronetivity/cloudron-isoflow/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/pronetivity/cloudron-isoflow/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/pronetivity/cloudron-isoflow/compare/v1.1.1...v1.2.0
