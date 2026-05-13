@@ -10,6 +10,18 @@ Change categories: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `Securi
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-05-14
+
+### Added
+- CI auto-creates a GitHub Release for every `v*` tag push, with the matching `## [X.Y.Z]` section from `CHANGELOG.md` as the body, plus the GHCR image reference and digest. Pre-release tags (containing `-`) are flagged automatically.
+- CI auto-catalogs each release in `CloudronVersions.json` via `cloudron versions add --state published` and commits the result back to `main`. Cloudron servers tracking the catalog URL pick up the new version on their next poll.
+- `CloudronVersions.json` at the repo root provides a community-app catalog feed. End users can install via `cloudron install --versions-url https://raw.githubusercontent.com/pronetivity/cloudron-isoflow/main/CloudronVersions.json ...` or paste the same URL under Settings → App Store → Add custom app in the dashboard.
+- Upstream Isoflow editor screenshot added to the manifest's `mediaLinks` so the Cloudron app store shows a preview image.
+
+### Changed
+- `README.md` trimmed to reflect the fork's scope and maintenance status.
+- `PUBLISHING.md` and `VERSIONING.md` reference the `origin` remote in push examples instead of a maintainer-specific remote name.
+
 ## [1.3.0] - 2026-05-13
 
 ### Added
@@ -33,6 +45,7 @@ Change categories: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `Securi
 ### Changed
 - Pin `pathfinding` to the upstream GitHub tarball (`github:qiao/PathFinding.js#0.4.18`) instead of the npm registry release.
 
-[Unreleased]: https://github.com/pronetivity/cloudron-isoflow/compare/v1.3.0...HEAD
+[Unreleased]: https://github.com/pronetivity/cloudron-isoflow/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/pronetivity/cloudron-isoflow/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/pronetivity/cloudron-isoflow/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/pronetivity/cloudron-isoflow/compare/v1.1.1...v1.2.0

@@ -1,6 +1,6 @@
 {
   "name": "cloudron-isoflow-server",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "private": true,
   "description": "Tiny Express host + optional Cloudron OIDC gate for the Isoflow SPA.",
   "license": "MIT",

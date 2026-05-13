@@ -5,7 +5,7 @@
   "description": "file://packaging/cloudron/description.md",
   "postInstallMessage": "file://packaging/cloudron/postinstall.md",
   "tagline": "Browser-based isometric network diagrams",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "healthCheckPath": "/healthz",
   "httpPort": 3000,
   "manifestVersion": 2,
