@@ -34,7 +34,7 @@ Every user-visible change picks up an entry under the `## [Unreleased]` section 
    npm version 1.5.0        # exact bump
    ```
    This single command: bumps `package.json` + `package-lock.json`, runs `scripts/sync-version.js` to update `CloudronManifest.json` and `packaging/cloudron/package.json`, stages those files, creates the commit `vX.Y.Z`, and creates the annotated tag `vX.Y.Z`.
-4. Push: `git push <remote> main && git push <remote> vX.Y.Z`.
+4. Push: `git push origin main && git push origin vX.Y.Z`.
 
 The commit message format `vX.Y.Z` comes from `npm version` by default. Override with `npm version --message "chore: releases v%s"` if you want a different convention.
 

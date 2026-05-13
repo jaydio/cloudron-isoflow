@@ -8,7 +8,7 @@ For the version-bump mechanics (SemVer rules, changelog format, tag form), see [
 
 | Artifact | Location |
 |---|---|
-| Source | `pronetivity/cloudron-isoflow` on GitHub (`pronetivity` remote in this repo) |
+| Source | `pronetivity/cloudron-isoflow` on GitHub |
 | Container image | `ghcr.io/pronetivity/cloudron-isoflow` on GHCR |
 | Image tags | `:vX.Y.Z` (every release tag), `:latest` (latest release tag), `:edge` (every `main` push) |
 | App id | `ph.pronetivity.isoflow` (Cloudron-side identity; immutable per install) |
@@ -20,7 +20,7 @@ The image registry comes from `${{ github.repository_owner }}` in the workflow, 
 
 1. **Changelog**. In `CHANGELOG.md`, rename `## [Unreleased]` → `## [X.Y.Z] - YYYY-MM-DD`, add a fresh empty `[Unreleased]`, append the compare link, then `git add CHANGELOG.md`.
 2. **Bump + tag in one command**. `npm version patch | minor | major | X.Y.Z` — this bumps `package.json` + lockfile, runs `scripts/sync-version.js` to update `CloudronManifest.json` and `packaging/cloudron/package.json`, commits everything as `vX.Y.Z`, and creates the annotated tag. See [VERSIONING.md](./VERSIONING.md#cutting-a-release) for details.
-3. **Push**. `git push pronetivity main && git push pronetivity vX.Y.Z`.
+3. **Push**. `git push origin main && git push origin vX.Y.Z`.
 4. **CI builds + publishes**. The `Build Cloudron image` workflow (`.github/workflows/cloudron-image.yml`) fires on the tag push and does three things automatically:
    - builds the multi-stage `Dockerfile` and pushes `ghcr.io/pronetivity/cloudron-isoflow:vX.Y.Z` + `:latest` to GHCR;
    - extracts the matching `## [X.Y.Z]` section from `CHANGELOG.md`;
@@ -67,7 +67,7 @@ node -e "const fs=require('fs'),p=require('path'),h=p.join(process.env.HOME,'.cl
 cloudron versions add --state published
 git add CloudronVersions.json
 git commit -m "chore: catalogs vX.Y.Z in CloudronVersions.json"
-git push pronetivity main
+git push origin main
 ```
 
 ### One-time setup (already done for this repo)
