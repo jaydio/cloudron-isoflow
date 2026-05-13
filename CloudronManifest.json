@@ -1,7 +1,7 @@
 {
   "id": "ph.pronetivity.isoflow",
   "title": "Isoflow",
-  "author": "Isoflow contributors; Cloudron packaging by Pronetivity",
+  "author": "Isoflow contributors; Cloudron packaging by ProNetivity Inc.",
   "description": "file://packaging/cloudron/description.md",
   "postInstallMessage": "file://packaging/cloudron/postinstall.md",
   "tagline": "Browser-based isometric network diagrams",
