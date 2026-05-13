@@ -25,6 +25,10 @@ Every user-visible change picks up an entry under the `## [Unreleased]` section 
 5. Tag: `git tag -a vX.Y.Z -m "vX.Y.Z"`.
 6. Push: `git push <remote> main && git push <remote> vX.Y.Z`.
 
+## Publishing the release
+
+After tagging and pushing, follow [PUBLISHING.md](./PUBLISHING.md) for the image build, GHCR push, and Cloudron install steps.
+
 ## Notes for forks and downstream packaging
 
 - Downstream packaging (e.g. Cloudron) should track tagged releases, not `main`.
