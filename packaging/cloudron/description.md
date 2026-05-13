@@ -18,7 +18,7 @@ By default the app is reachable publicly without authentication, matching the up
 - Diagrams are not stored server-side. They live entirely in the user's browser session and can be exported / imported as JSON files.
 - `/app/data/app.env` and `/app/data/sessions/` are the only persistent files; both are included in backups.
 
-## Source
+## Source & license
 
-- App: https://github.com/markmanx/isoflow
-- This package: https://github.com/pronetivity/cloudron-isoflow
+- Upstream app: [markmanx/isoflow](https://github.com/markmanx/isoflow) — MIT, © 2025 Mark Mankarious
+- Cloudron packaging: [pronetivity/cloudron-isoflow](https://github.com/pronetivity/cloudron-isoflow) — MIT, © 2026 ProNetivity Inc.

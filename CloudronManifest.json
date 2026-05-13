@@ -30,5 +30,11 @@
   },
   "memoryLimit": 268435456,
   "documentationUrl": "https://github.com/pronetivity/cloudron-isoflow#readme",
-  "forumUrl": "https://forum.cloudron.io/category/community-apps"
+  "forumUrl": "https://forum.cloudron.io/category/community-apps",
+  "packagerName": "ProNetivity Inc.",
+  "packagerUrl": "https://pronetivity.ph",
+  "upstreamLicense": {
+    "name": "MIT",
+    "url": "https://github.com/markmanx/isoflow/blob/main/LICENSE"
+  }
 }
