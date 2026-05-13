@@ -1,4 +1,57 @@
 {
     "stable": true,
-    "versions": {}
+    "versions": {
+        "1.3.0": {
+            "manifest": {
+                "id": "ph.pronetivity.isoflow",
+                "title": "Isoflow",
+                "author": "Isoflow contributors; Cloudron packaging by ProNetivity Inc.",
+                "description": "# Isoflow\n\nIsoflow is an open-source React-based editor for drawing isometric network and infrastructure diagrams in the browser. This package wraps the standalone Isoflow web build with a small Express host so it can run on Cloudron.\n\n## Highlights\n\n- Drag-and-drop isometric tiles, connectors, rectangles, and text boxes.\n- 1000+ built-in icons; supports custom icon packs.\n- Import / export diagrams as JSON; export as PNG.\n- Auto-migrates legacy `v2.3.0`-shaped JSON exports to the current schema.\n\n## Authentication\n\nBy default the app is reachable publicly without authentication, matching the upstream Isoflow standalone experience. Optionally lock it down to authenticated Cloudron users by setting `AUTH_ENABLED=true` in `/app/data/app.env` and restarting the app — the Cloudron OIDC addon handles the login.\n\n## Data\n\n- Diagrams are not stored server-side. They live entirely in the user's browser session and can be exported / imported as JSON files.\n- `/app/data/app.env` and `/app/data/sessions/` are the only persistent files; both are included in backups.\n\n## Source & license\n\n- Upstream app: [markmanx/isoflow](https://github.com/markmanx/isoflow) — MIT, © 2025 Mark Mankarious\n- Cloudron packaging: [pronetivity/cloudron-isoflow](https://github.com/pronetivity/cloudron-isoflow) — MIT, © 2026 ProNetivity Inc.\n",
+                "postInstallMessage": "# Isoflow is installed\n\nBy default the app is publicly reachable without authentication.\n\n## Enable Cloudron single sign-on\n\n1. Open the Cloudron Web Terminal for this app.\n2. Edit `/app/data/app.env` and set `AUTH_ENABLED=true`.\n3. Restart the app.\n\nAny authenticated Cloudron user will then be required to log in before reaching the editor. Limit access to specific users by populating `ALLOWED_USERS` with a comma-separated username list in the same file.\n\nTo return to public access, set `AUTH_ENABLED=false` and restart again.\n",
+                "tagline": "Browser-based isometric network diagrams",
+                "version": "1.3.0",
+                "healthCheckPath": "/healthz",
+                "httpPort": 3000,
+                "manifestVersion": 2,
+                "website": "https://github.com/pronetivity/cloudron-isoflow",
+                "contactEmail": "jd@pronetivity.ph",
+                "icon": "file://packaging/cloudron/icon.png",
+                "tags": [
+                    "diagrams",
+                    "drawing",
+                    "isometric",
+                    "network",
+                    "architecture",
+                    "collaboration"
+                ],
+                "addons": {
+                    "localstorage": {},
+                    "oidc": {
+                        "loginRedirectUri": "/auth/openid/callback",
+                        "logoutRedirectUri": "/",
+                        "tokenSignatureAlgorithm": "RS256"
+                    }
+                },
+                "memoryLimit": 268435456,
+                "documentationUrl": "https://github.com/pronetivity/cloudron-isoflow#readme",
+                "forumUrl": "https://forum.cloudron.io/category/community-apps",
+                "packagerName": "ProNetivity Inc.",
+                "packagerUrl": "https://pronetivity.ph",
+                "upstreamLicense": {
+                    "name": "MIT",
+                    "url": "https://github.com/markmanx/isoflow/blob/main/LICENSE"
+                },
+                "iconUrl": "https://raw.githubusercontent.com/pronetivity/cloudron-isoflow/main/packaging/cloudron/icon.png",
+                "minBoxVersion": "9.1.0",
+                "changelog": "### Added\n- Cloudron community-app packaging under `packaging/cloudron/`: multi-stage `Dockerfile` (builds the SPA, then runs on `cloudron/base:5.0.0`), `CloudronManifest.json` at the repo root (manifestVersion 2, `localstorage` + `oidc` addons), Express host (`server.js`) that serves the built SPA and optionally gates all routes behind Cloudron OIDC, plus `start.sh` that seeds `/app/data/app.env` on first boot.\n- `AUTH_ENABLED` toggle in `/app/data/app.env` (default `false`) flips the Cloudron deployment between public and SSO-protected without rebuilding. Optional `ALLOWED_USERS` allowlist when SSO is on.\n- GitHub Actions workflow (`.github/workflows/cloudron-image.yml`) builds and pushes `ghcr.io/<owner>/cloudron-isoflow:vX.Y.Z` on tag pushes and `:edge` on `main`.\n- `PUBLISHING.md` documents the tag → GHCR → `cloudron install` flow.\n- App icon: 1024×1024 ProNetivity-branded artwork at `packaging/cloudron/icon.png`.\n- Manifest now declares `packagerName`, `packagerUrl`, and `upstreamLicense` so the Cloudron app store shows the right attribution.\n### Changed\n- Cloudron app id is `ph.pronetivity.isoflow`. Pre-existing installs under the previous id must be uninstalled and reinstalled to pick up the new id.\n- `LICENSE` keeps the upstream MIT copyright and adds a ProNetivity Inc. copyright line for the Cloudron packaging modifications.\n- Upstream nginx-only `Dockerfile` retained for reference as `Dockerfile.legacy`.\n",
+                "mediaLinks": [
+                    "https://raw.githubusercontent.com/pronetivity/cloudron-isoflow/main/packaging/cloudron/screenshots/01-editor.png"
+                ],
+                "dockerImage": "ghcr.io/pronetivity/cloudron-isoflow:v1.3.0"
+            },
+            "creationDate": "Wed, 13 May 2026 15:39:46 GMT",
+            "ts": "Wed, 13 May 2026 15:39:46 GMT",
+            "publishState": "published"
+        }
+    }
 }
