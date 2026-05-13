@@ -28,7 +28,7 @@ The image registry comes from `${{ github.repository_owner }}` in the workflow, 
 
    Watch the run at `https://github.com/pronetivity/cloudron-isoflow/actions`. The Release shows up at `https://github.com/pronetivity/cloudron-isoflow/releases`.
 5. **Verify image**. `docker pull ghcr.io/pronetivity/cloudron-isoflow:vX.Y.Z` from any machine. The image is public by default once the GitHub package visibility is set to public — go to the package settings on GitHub and switch it once after the first publish.
-6. **Catalog the version** so Cloudron servers tracking the `CloudronVersions.json` URL pick it up. See [Community-app catalog](#community-app-catalog-cloudronversionsjson) below.
+6. **Catalog the version** — the same workflow then installs the Cloudron CLI, runs `cloudron versions add --state published`, and commits the updated `CloudronVersions.json` back to `main` as `chore: catalogs vX.Y.Z in CloudronVersions.json [skip ci]`. Cloudron servers tracking the catalog URL pick up the new version on their next poll. Details in [Community-app catalog](#community-app-catalog-cloudronversionsjson) below.
 
 ## Community-app catalog (`CloudronVersions.json`)
 
@@ -52,22 +52,23 @@ Cloudron treats this file as the source-of-truth feed for a community app. Users
 
 Do not edit this by hand — `cloudron versions add` writes it and embeds the manifest content from disk. The `changelog` field of the manifest is filled from the `./CHANGELOG` file (which `scripts/sync-version.js` regenerates from the `## [X.Y.Z]` section of `CHANGELOG.md` during `npm version`).
 
-### After every release: add the version to the catalog
+### After every release: automated
 
-Once the GHCR image is built and pulled-tested (steps 4–5 above), from your local checkout on the release tag:
+`cloudron versions add` runs inside the `Build Cloudron image` workflow on every `v*` tag push, immediately after the GHCR image is pushed and the GitHub Release is created. The catalog commit lands on `main` as `chore: catalogs vX.Y.Z in CloudronVersions.json [skip ci]`. No manual step required.
+
+Cloudron servers re-fetch the raw URL on a schedule (and on demand from the dashboard), so the new version appears in user dashboards within minutes of the workflow finishing.
+
+### Manual catalog (only if CI is unavailable)
 
 ```bash
 git checkout vX.Y.Z
-docker pull ghcr.io/pronetivity/cloudron-isoflow:vX.Y.Z
-docker tag  ghcr.io/pronetivity/cloudron-isoflow:vX.Y.Z ghcr.io/pronetivity/cloudron-isoflow:vX.Y.Z   # records the ref locally for `cloudron versions add`
-
+# Record the image so `cloudron versions add` picks it up.
+node -e "const fs=require('fs'),p=require('path'),h=p.join(process.env.HOME,'.cloudron.json');let c={};try{c=JSON.parse(fs.readFileSync(h))}catch(_){};c.apps=c.apps||{};c.apps[process.cwd()]={repository:'ghcr.io/pronetivity/cloudron-isoflow',dockerImage:'ghcr.io/pronetivity/cloudron-isoflow:vX.Y.Z'};fs.writeFileSync(h,JSON.stringify(c,null,4))"
 cloudron versions add --state published
 git add CloudronVersions.json
 git commit -m "chore: catalogs vX.Y.Z in CloudronVersions.json"
 git push pronetivity main
 ```
-
-The new entry is live the moment the commit reaches `main` — Cloudron servers re-fetch the raw URL on a schedule (and on demand from the dashboard).
 
 ### One-time setup (already done for this repo)
 

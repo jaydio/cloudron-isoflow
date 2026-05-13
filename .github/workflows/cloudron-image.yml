@@ -113,3 +113,67 @@ jobs:
           draft: false
           prerelease: ${{ contains(github.ref_name, '-') }}
           fail_on_unmatched_files: false
+
+      - name: Set up Node for Cloudron CLI
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Cloudron CLI
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: npm install -g cloudron@^7
+
+      - name: Catalog version in CloudronVersions.json
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          IMAGE_REF: ghcr.io/${{ github.repository_owner }}/cloudron-isoflow:${{ github.ref_name }}
+          REPOSITORY: ghcr.io/${{ github.repository_owner }}/cloudron-isoflow
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          # Record the pushed image so `cloudron versions add` picks it up.
+          node - <<'NODE'
+          const fs = require('fs');
+          const path = require('path');
+          const cfgPath = path.join(process.env.HOME, '.cloudron.json');
+          let cfg = {};
+          try { cfg = JSON.parse(fs.readFileSync(cfgPath, 'utf8')); } catch (_) {}
+          cfg.apps = cfg.apps || {};
+          cfg.apps[process.cwd()] = {
+            repository: process.env.REPOSITORY,
+            dockerImage: process.env.IMAGE_REF
+          };
+          fs.writeFileSync(cfgPath, JSON.stringify(cfg, null, 4));
+          console.log('recorded image:', process.env.IMAGE_REF);
+          NODE
+
+          version="${REF_NAME#v}"
+          if jq -e --arg v "$version" '.versions[$v]' CloudronVersions.json > /dev/null; then
+            echo "Version $version already cataloged; skipping."
+            exit 0
+          fi
+          cloudron versions add --state published
+
+      - name: Commit CloudronVersions.json back to main
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          REF_NAME: ${{ github.ref_name }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          if git diff --quiet CloudronVersions.json; then
+            echo "No catalog changes to commit."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # The workflow checked out the tag ref; move to main, replay the
+          # CloudronVersions.json change on top of the current main HEAD.
+          updated=$(cat CloudronVersions.json)
+          git fetch origin main
+          git checkout -B main origin/main
+          printf '%s' "$updated" > CloudronVersions.json
+          git add CloudronVersions.json
+          git commit -m "chore: catalogs ${REF_NAME} in CloudronVersions.json [skip ci]"
+          git push origin main
