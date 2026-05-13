@@ -1,0 +1,66 @@
+name: Build Cloudron image
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+    paths:
+      - 'packaging/cloudron/**'
+      - 'src/**'
+      - 'webpack/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tsconfig.json'
+      - '.github/workflows/cloudron-image.yml'
+  pull_request:
+    paths:
+      - 'packaging/cloudron/**'
+      - '.github/workflows/cloudron-image.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: cloudron-image-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Derive image metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository_owner }}/cloudron-isoflow
+          tags: |
+            type=ref,event=tag
+            type=raw,value=latest,enable=${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') }}
+            type=raw,value=edge,enable=${{ github.ref == 'refs/heads/main' && github.event_name == 'push' }}
+            type=sha,format=short,enable=${{ github.event_name == 'pull_request' }}
+
+      - name: Build${{ github.event_name == 'pull_request' && '' || ' and push' }}
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: packaging/cloudron/Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          platforms: linux/amd64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

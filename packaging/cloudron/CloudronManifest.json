@@ -1,0 +1,35 @@
+{
+  "id": "io.github.jaydio.isoflow",
+  "title": "Isoflow",
+  "author": "Isoflow contributors; Cloudron packaging by JD",
+  "description": "file://description.md",
+  "postInstallMessage": "file://postinstall.md",
+  "tagline": "Browser-based isometric network diagrams",
+  "version": "1.2.0",
+  "healthCheckPath": "/healthz",
+  "httpPort": 3000,
+  "manifestVersion": 2,
+  "website": "https://github.com/pronetivity/cloudron-isoflow",
+  "contactEmail": "jd@pronetivity.ph",
+  "icon": "file://icon.png",
+  "tags": [
+    "diagrams",
+    "drawing",
+    "isometric",
+    "network",
+    "architecture",
+    "collaboration"
+  ],
+  "addons": {
+    "localstorage": {},
+    "oidc": {
+      "loginRedirectUri": "/auth/openid/callback",
+      "logoutRedirectUri": "/",
+      "tokenSignatureAlgorithm": "RS256"
+    }
+  },
+  "memoryLimit": 268435456,
+  "minBoxMemory": 268435456,
+  "documentationUrl": "https://github.com/pronetivity/cloudron-isoflow#readme",
+  "forumUrl": "https://forum.cloudron.io/category/community-apps"
+}

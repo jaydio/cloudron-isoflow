@@ -10,6 +10,11 @@ Change categories: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `Securi
 
 ## [Unreleased]
 
+### Added
+- Cloudron community-app packaging under `packaging/cloudron/`: multi-stage `Dockerfile` (builds the SPA, then runs on `cloudron/base:5.0.0`), `CloudronManifest.json` (manifestVersion 2, `localstorage` + `oidc` addons), Express host (`server.js`) that serves the built SPA and optionally gates all routes behind Cloudron OIDC, plus `start.sh` that seeds `/app/data/app.env` on first boot.
+- `AUTH_ENABLED` toggle in `/app/data/app.env` (default `false`) flips the Cloudron deployment between public and SSO-protected without rebuilding. Optional `ALLOWED_USERS` allowlist when SSO is on.
+- GitHub Actions workflow (`.github/workflows/cloudron-image.yml`) builds and pushes `ghcr.io/<owner>/cloudron-isoflow:vX.Y.Z` on tag pushes and `:edge` on `main`.
+
 ## [1.2.0] - 2026-05-13
 
 ### Added
@@ -18,5 +23,5 @@ Change categories: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `Securi
 ### Changed
 - Pin `pathfinding` to the upstream GitHub tarball (`github:qiao/PathFinding.js#0.4.18`) instead of the npm registry release.
 
-[Unreleased]: https://github.com/jaydio/cloudron-isoflow/compare/v1.2.0...HEAD
-[1.2.0]: https://github.com/jaydio/cloudron-isoflow/compare/v1.1.1...v1.2.0
+[Unreleased]: https://github.com/pronetivity/cloudron-isoflow/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/pronetivity/cloudron-isoflow/compare/v1.1.1...v1.2.0
