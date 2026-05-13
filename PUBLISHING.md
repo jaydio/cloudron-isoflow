@@ -17,8 +17,8 @@ The image registry comes from `${{ github.repository_owner }}` in the workflow, 
 
 ## End-to-end release flow
 
-1. **Bump + changelog**. Follow the steps in [VERSIONING.md](./VERSIONING.md#cutting-a-release) — move `[Unreleased]` entries to a dated version section, bump `package.json#version` (and the lockfile), commit `chore: releases vX.Y.Z`.
-2. **Tag**. `git tag -a vX.Y.Z -m "vX.Y.Z"`.
+1. **Changelog**. In `CHANGELOG.md`, rename `## [Unreleased]` → `## [X.Y.Z] - YYYY-MM-DD`, add a fresh empty `[Unreleased]`, append the compare link, then `git add CHANGELOG.md`.
+2. **Bump + tag in one command**. `npm version patch | minor | major | X.Y.Z` — this bumps `package.json` + lockfile, runs `scripts/sync-version.js` to update `CloudronManifest.json` and `packaging/cloudron/package.json`, commits everything as `vX.Y.Z`, and creates the annotated tag. See [VERSIONING.md](./VERSIONING.md#cutting-a-release) for details.
 3. **Push**. `git push pronetivity main && git push pronetivity vX.Y.Z`.
 4. **CI builds**. The `Build Cloudron image` workflow (`.github/workflows/cloudron-image.yml`) fires on the tag push, builds the multi-stage `Dockerfile`, and pushes `ghcr.io/pronetivity/cloudron-isoflow:vX.Y.Z` + `:latest` to GHCR. Watch the run at `https://github.com/pronetivity/cloudron-isoflow/actions`.
 5. **Verify image**. `docker pull ghcr.io/pronetivity/cloudron-isoflow:vX.Y.Z` from any machine. The image is public by default once the GitHub package visibility is set to public — go to the package settings on GitHub and switch it once after the first publish.

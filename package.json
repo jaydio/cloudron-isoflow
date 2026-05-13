@@ -17,7 +17,8 @@
     "test": "jest",
     "lint": "tsc --noEmit && eslint ./src/**/* --ext .ts,.tsx",
     "lint:fix": "eslint --fix ./src/**/* --ext .ts,.tsx",
-    "docker:build": "webpack --config ./webpack/docker.config.js"
+    "docker:build": "webpack --config ./webpack/docker.config.js",
+    "version": "node scripts/sync-version.js && git add CloudronManifest.json packaging/cloudron/package.json"
   },
   "devDependencies": {
     "@isoflow/isopacks": "^0.0.10",

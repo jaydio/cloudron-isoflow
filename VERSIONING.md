@@ -10,7 +10,13 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 - **MINOR** — backwards-compatible feature additions or visible behavior changes (`Added`, `Changed`, `Deprecated`).
 - **MAJOR** — breaking changes to the public API, model schema, or stored data format (`Removed`, breaking `Changed`).
 
-The single source of truth is `package.json#version`. Tags use the form `vMAJOR.MINOR.PATCH` (e.g. `v1.2.0`) and must equal that field.
+## Single source of truth
+
+`package.json#version` is the source. Every other file that pins the version (`CloudronManifest.json`, `packaging/cloudron/package.json`, the lockfile) is kept in sync automatically — never edit them by hand.
+
+The synchroniser is `scripts/sync-version.js`, wired into the `npm version` lifecycle via the `version` script in `package.json`. Running `npm version` triggers it and stages the synced files so they land in the release commit.
+
+Tags use the form `vMAJOR.MINOR.PATCH` (e.g. `v1.2.0`) and `npm version` creates them automatically.
 
 ## Day-to-day: as work lands
 
@@ -18,12 +24,19 @@ Every user-visible change picks up an entry under the `## [Unreleased]` section 
 
 ## Cutting a release
 
-1. Decide the bump (patch / minor / major) from what's in `[Unreleased]`.
-2. In `CHANGELOG.md`, rename `## [Unreleased]` → `## [X.Y.Z] - YYYY-MM-DD`, add a fresh empty `## [Unreleased]` above it, and update the compare links at the bottom.
-3. Bump `package.json#version` to `X.Y.Z`. Sync the lockfile: `npm install --package-lock-only --ignore-scripts`.
-4. Commit: `chore: releases vX.Y.Z`.
-5. Tag: `git tag -a vX.Y.Z -m "vX.Y.Z"`.
-6. Push: `git push <remote> main && git push <remote> vX.Y.Z`.
+1. In `CHANGELOG.md`, rename `## [Unreleased]` → `## [X.Y.Z] - YYYY-MM-DD`, add a fresh empty `## [Unreleased]` above it, and append a new compare link at the bottom.
+2. `git add CHANGELOG.md` so the rename lands in the release commit.
+3. Run **one** of:
+   ```
+   npm version patch        # 1.3.0 -> 1.3.1
+   npm version minor        # 1.3.0 -> 1.4.0
+   npm version major        # 1.3.0 -> 2.0.0
+   npm version 1.5.0        # exact bump
+   ```
+   This single command: bumps `package.json` + `package-lock.json`, runs `scripts/sync-version.js` to update `CloudronManifest.json` and `packaging/cloudron/package.json`, stages those files, creates the commit `vX.Y.Z`, and creates the annotated tag `vX.Y.Z`.
+4. Push: `git push <remote> main && git push <remote> vX.Y.Z`.
+
+The commit message format `vX.Y.Z` comes from `npm version` by default. Override with `npm version --message "chore: releases v%s"` if you want a different convention.
 
 ## Publishing the release
 

@@ -22,6 +22,10 @@ Builds the upstream Isoflow SPA into a Cloudron community app with an optional C
 
 The Isoflow SPA itself is built from the repo root (`npm run docker:build`).
 
+## Versioning
+
+`package.json#version` is the single source of truth. `CloudronManifest.json#version` and `packaging/cloudron/package.json#version` are kept in sync automatically by `scripts/sync-version.js`, which the `npm version` lifecycle invokes — never edit them by hand. See [VERSIONING.md](../../VERSIONING.md) for the release flow and [PUBLISHING.md](../../PUBLISHING.md) for the publish-to-Cloudron flow.
+
 ## Build & install (Cloudron CLI workflow)
 
 From the repo root:
