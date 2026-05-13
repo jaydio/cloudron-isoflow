@@ -29,7 +29,6 @@
     }
   },
   "memoryLimit": 268435456,
-  "minBoxMemory": 268435456,
   "documentationUrl": "https://github.com/pronetivity/cloudron-isoflow#readme",
   "forumUrl": "https://forum.cloudron.io/category/community-apps"
 }
