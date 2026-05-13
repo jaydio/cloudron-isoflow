@@ -20,7 +20,12 @@ The image registry comes from `${{ github.repository_owner }}` in the workflow, 
 1. **Changelog**. In `CHANGELOG.md`, rename `## [Unreleased]` → `## [X.Y.Z] - YYYY-MM-DD`, add a fresh empty `[Unreleased]`, append the compare link, then `git add CHANGELOG.md`.
 2. **Bump + tag in one command**. `npm version patch | minor | major | X.Y.Z` — this bumps `package.json` + lockfile, runs `scripts/sync-version.js` to update `CloudronManifest.json` and `packaging/cloudron/package.json`, commits everything as `vX.Y.Z`, and creates the annotated tag. See [VERSIONING.md](./VERSIONING.md#cutting-a-release) for details.
 3. **Push**. `git push pronetivity main && git push pronetivity vX.Y.Z`.
-4. **CI builds**. The `Build Cloudron image` workflow (`.github/workflows/cloudron-image.yml`) fires on the tag push, builds the multi-stage `Dockerfile`, and pushes `ghcr.io/pronetivity/cloudron-isoflow:vX.Y.Z` + `:latest` to GHCR. Watch the run at `https://github.com/pronetivity/cloudron-isoflow/actions`.
+4. **CI builds + publishes**. The `Build Cloudron image` workflow (`.github/workflows/cloudron-image.yml`) fires on the tag push and does three things automatically:
+   - builds the multi-stage `Dockerfile` and pushes `ghcr.io/pronetivity/cloudron-isoflow:vX.Y.Z` + `:latest` to GHCR;
+   - extracts the matching `## [X.Y.Z]` section from `CHANGELOG.md`;
+   - creates a GitHub Release named `vX.Y.Z` with that section as the body, plus a "Cloudron install" snippet and the image digest. Tags containing a `-` (e.g. `v1.3.0-1`) are flagged as pre-releases automatically.
+
+   Watch the run at `https://github.com/pronetivity/cloudron-isoflow/actions`. The Release shows up at `https://github.com/pronetivity/cloudron-isoflow/releases`.
 5. **Verify image**. `docker pull ghcr.io/pronetivity/cloudron-isoflow:vX.Y.Z` from any machine. The image is public by default once the GitHub package visibility is set to public — go to the package settings on GitHub and switch it once after the first publish.
 
 ## Installing on a Cloudron
