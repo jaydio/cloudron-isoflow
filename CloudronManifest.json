@@ -36,5 +36,11 @@
   "upstreamLicense": {
     "name": "MIT",
     "url": "https://github.com/markmanx/isoflow/blob/main/LICENSE"
-  }
+  },
+  "iconUrl": "https://raw.githubusercontent.com/pronetivity/cloudron-isoflow/main/packaging/cloudron/icon.png",
+  "minBoxVersion": "9.1.0",
+  "changelog": "file://CHANGELOG",
+  "mediaLinks": [
+    "https://raw.githubusercontent.com/markmanx/isoflow/main/docs/public/img/screenshot.png"
+  ]
 }
