@@ -41,6 +41,6 @@
   "minBoxVersion": "9.1.0",
   "changelog": "file://CHANGELOG",
   "mediaLinks": [
-    "https://raw.githubusercontent.com/markmanx/isoflow/main/docs/public/img/screenshot.png"
+    "https://raw.githubusercontent.com/pronetivity/cloudron-isoflow/main/packaging/cloudron/screenshots/01-editor.png"
   ]
 }
